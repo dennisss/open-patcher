@@ -1,0 +1,18 @@
+*.o
+*~
+
+config/*.xml
+
+#Visual Studio Files
+*.vcxproj.user
+*.sdf
+*.suo
+
+
+#Objects and Binaries
+bin/*
+Release/*
+Debug/*
+
+gui_win/obj/*
+gui_win/bin/*

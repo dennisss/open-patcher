@@ -1,0 +1,2 @@
+Place Xml app config files in this folder.
+They will be automatically copied over to the gui build directorys.

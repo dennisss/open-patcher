@@ -1,0 +1,10 @@
+Open Patcher
+-----------------
+
+This is a program designed to automate the modification of application binaries and other data files.
+
+Mods are created by defining their behavior loosely in an Xml configuration file.
+
+The program takes these configurations files and the application's working directory as inputs and attempts to modify the appropriate files with builtin functions for performing advanced file analysis to keep the configuration files are high-level as possible.
+
+Currently the program only supports iOS Mach-O binaries.
