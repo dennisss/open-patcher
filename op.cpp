@@ -357,7 +357,7 @@ bool parseCmd(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-	printf("Open Patcher v0.1\nSymbolic iOS Mach-O executable modifier, memory patcher, and more\n");
+	printf("Open Patcher %d.%d-%d\nApplication modification and reverse engineering automation\n", VERSION_MAJOR, VERSION_MINOR, VERSION_REVISION);
 	printf("-------------------------------------------------------------------\n\n");
 
 	if(argc < 3){
@@ -415,6 +415,24 @@ int main(int argc, char *argv[])
 	}
 	if(strcmp("app", root->Name()) != 0){
 		GLOBAL_LOG(LOG_LEVEL::ERROR, "Failed to load config file. Invalid root element");
+		return 1;
+	}
+
+	GLOBAL_LOG(LOG_LEVEL::VERBOSE, "Configuration revision should be '%d'", CONFIG_REVISION);
+	const char* config_rev = root->Attribute("configrevision");
+	if(config_rev != NULL){
+		int rev = atoi(config_rev);
+		if(rev == 0){
+			GLOBAL_LOG(LOG_LEVEL::ERROR, "Invalid configuration revision number");
+			return 1;
+		}
+		if(rev != CONFIG_REVISION){
+			GLOBAL_LOG(LOG_LEVEL::ERROR, "Configuration revision not supported by this program. Consider using a different version of the config file or a different version of this program.");
+			return 1;
+		}
+	}
+	else{
+		GLOBAL_LOG(LOG_LEVEL::ERROR, "No configuration revision defined on the root element");
 		return 1;
 	}
 

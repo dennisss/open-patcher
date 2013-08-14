@@ -4,6 +4,7 @@
 config/*.xml
 
 #Visual Studio Files
+*.opensdf
 *.vcxproj.user
 *.sdf
 *.suo

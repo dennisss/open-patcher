@@ -19,6 +19,11 @@
 #ifndef _OPEN_PATCHER_
 #define _OPEN_PATCHER_
 
+#define CONFIG_REVISION 1
+#define VERSION_MAJOR 0
+#define VERSION_MINOR 1
+#define VERSION_REVISION 1
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <regex>
