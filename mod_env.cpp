@@ -96,3 +96,19 @@ bool MOD_ENV::eval(const char *input, uint32_t* out){
 
 	return true;
 }
+
+FILE *MOD_ENV::afopen(const char* filename){
+	char buf[256];
+	strcpy(buf, app_directory);
+	strcat(buf, filename);
+	return fopen(buf, "rb+");
+}
+
+int MOD_ENV::afflush(FILE *_File){
+	return fflush(_File);
+};
+
+/* TODO: Keep track of opens and closes to prevent files from being left open after a mod is done applying */
+int MOD_ENV::afclose(FILE *_File){
+	return fclose(_File);
+};

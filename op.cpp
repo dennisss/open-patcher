@@ -132,6 +132,20 @@ void loadFile(char *file){
 
 	MOD_ENV env;
 	env.file = &m;
+
+	char* delim;
+	delim = strrchr(file, '\\');
+	if(delim == NULL){
+		delim = strrchr(file, '/');
+		if(delim == NULL){
+			//Assume same directory
+			delim = file;
+			*delim = '/';
+		}
+	}
+
+	*(delim + 1) = NULL;
+	env.app_directory = file;
 	//env._vars.clear;
 
 	initHandles(&env);

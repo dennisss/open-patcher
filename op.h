@@ -64,9 +64,12 @@ public:
 	/* TODO: Have this initialized by each handler that needs it */
 	mach_o *file;
 
-	/* Common interface to open app files. This way remote files can be appropriately retrieved and flushed later */
+	/* Common interface to open app files. filename is relative to the app's data directory. This allows easier management of multiple directories and file source types */
 	/* All file handles will be rb+ */
-	FILE *fopen(const char* filename);
+	FILE *afopen(const char* filename);
+	int   afflush(FILE *_File);
+	int   afclose(FILE *_File);
+	char* app_directory;
 
 	/* each handler can access variables defined in the XML config file */
 	/* generally you do NOT need to use this function. just use the eval function on any parameters you get from the XML to make sure that any variable references are replaced */
@@ -79,7 +82,6 @@ public:
 	/* Handlers should use this on variable attributes */
 	bool eval(const char *input, char* out, int bufSize);
 	bool eval(const char *input, uint32_t* out);
-
 
 private:
 	std::map<const char*, char*, map_cstring_compare> _vars;
