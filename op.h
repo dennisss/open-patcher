@@ -88,13 +88,12 @@ private:
 };
 
 
-
-
 /* Inherit from this class in order to implement a new module into the patcher e.g: handle specific file format, packet filter... */
-/* Each handler must have a unique patch type ma,e that identifies it e.g: the code editor is identified by is <patch type="code">settings...</patch>*/
+/* Each handler must have a unique patch type attribute that identifies it e.g: the code editor is identified by is <patch type="code">settings...</patch>*/
 class patch_handler{
 public:
-	//TODO: have this return an error type
+	//TODO: Have this return an error type
+	/* Called everytime the program sees a 'patch' tag corresponding to the handler. return true on success, log any error messages */
 	virtual bool handle(XMLElement *patch) = 0;
 
 	/* Handlers are loaded once per handled application */
@@ -102,15 +101,20 @@ public:
 	virtual void load(MOD_ENV* env) = 0;
 
 	/* Make sure this returns the name of your handler */
-	/* This should be the same as your unique tag type */
+	/* This should be the same as the unique tag 'type' attribute value */
 	virtual const char* name() = 0;
+
+	/* Abbreviation of the name. Used for logging purposes */
+	virtual const char* abrv() = 0;
 	
 	/* Fairly obvious. Auto appends handler name, datetime, etc. */
-	void log(LOG_LEVEL lvl, char* msg, va_list args){ GLOBAL_LOG(this->name(), lvl, msg, args); };
+	void log(LOG_LEVEL lvl, char* msg, va_list args){ GLOBAL_LOG(this->abrv(), lvl, msg, args); };
 	void log(LOG_LEVEL lvl, char* msg, ...){ va_list args; va_start(args, msg); this->log(lvl, msg, args); };
 	
 	void log(char* msg, ...){ va_list args; va_start(args, msg); this->log(LOG_LEVEL::VERBOSE, msg, args); }; 
 
+	/* Do not touch this. It is used for handler management */
+	int _type;
 };
 
 #endif

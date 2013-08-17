@@ -22,11 +22,15 @@
 #include "../op.h"
 #include "../mach-o.h"
 
+patch_handler* code_handle_init();
+void code_handle_destroy(patch_handler* h);
+
 class code_handle : patch_handler{
 public:
 	code_handle(){};
 
-	const char* name(){ return  "CODE"; };
+	const char* name(){ return  "code"; };
+	const char* abrv(){ return  "CODE"; };
 
 	bool handle(XMLElement *patch);
 	void load(MOD_ENV* env);

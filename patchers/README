@@ -1,0 +1,41 @@
+patchers
+----------
+
+Put all code for any patching modules here. These are used to add functionality to the core framework of the program and to link these functions to behaviors declared in the xml configuration file
+
+In the configuration files each patcher is represented by a 'patcher' tag as seen below:
+<mod>
+	...
+	<patch type="patcher_name" extra_attributes="accessible to the patcher" >
+		...
+		<patcher defined tags or data>
+		...
+	</patch>
+	...
+</mod>
+
+
+Creating a patcher
+-----------------
+
+Every patcher should inherit the 'patch_handler' base class located in 'op.h'. All virtual functions should be implemented.
+- Patchers should log success and failure using the patch_handler::log functions. This unifies logging and debugging behavior.
+**Please use the already established naming convention. Handlers classes should be named as "onewordname_handle". Source and header files should be named as such as well**
+
+The patcher should internally save the MOD_ENV passed to it when it is loaded. This structure contains important variables and functions for interfacing with the user, the binary, file io, etc.
+- When working with app data files patchers should use the syntactically identical alternatives to 'fopen', 'fflush', and 'fclose'
+- When retreiving variables from the xml file, use the eval functions to automatically have variables replaced from the the raw string
+- Most future api's for patchers will be available through this
+
+Adding a patcher to the program
+------------------------------
+
+Implement two additional functions outside of the class:
+- patch_handler*  patchname_handle_init()
+- void            patchname_handle_destroy(patch_handler* h)
+**Note the naming convention**
+
+These two functions must be able return a new instance of the handler and destroy/delete it.
+
+Finally, open 'patchers/handlers.h' and add a include line to the patcher. Also at the end of the file, add an entry in the 'HANDLERS' array with the two functions implemented above.
+

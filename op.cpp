@@ -18,7 +18,7 @@
 
 #include "op.h"
 
-/* COMPILE FOR 32BIT ONLY!!!!!!!!!! */
+/* COMPILE FOR 32BIT AND LITTLE ENDIAN ONLY!!!!!!!!!! */
 /* Has not been verified for 64bit builds */
 
 #ifdef __APPLE
@@ -47,13 +47,33 @@ std::map<const char *, std::map<const char*, char *, map_cstring_compare>, map_c
 //All the main() flags and inputs
 std::map<char*, char*, map_cstring_compare> CMD_ARGS;
 
-#include "patchers/code_handle.h"
 
-//Eventually allocate and load these dynamically per each application patched
-code_handle ch;
+/* Begin handler allocation/delocation stuff */
+/* TODO: Wrap a class around this section, for multithreading and usage by other programs */
+
+#include "patchers/handlers.h"
+#define N_HANDLERS (sizeof(HANDLERS) / sizeof(HANDLER_ENTRY))
+
+patch_handler* handles[N_HANDLERS];
 void initHandles(MOD_ENV *env){
-	ch.load(env);
+	for(int x = 0; x < N_HANDLERS; x++){
+		/* This needs to be run once by this program */
+		handles[x] = HANDLERS[x].init();
+		handles[x]->_type = x;
+
+		/* This need to be run for every app being patched */
+		handles[x]->load(env);
+	}
 }
+
+void destroyHandles(){
+	for(int x = 0; x < N_HANDLERS; x++){
+		/* Type is used for future compatibility, because we are iterating over 'handles' not 'handlers'*/
+		/* Depending on the allocation scheme, there may not always by direct correlation between the indexes of 'handles' and 'handlers' */
+		HANDLERS[handles[x]->_type].destroy(handles[x]);
+	}
+}
+/* End handler allocation/delocation stuff */
 
 bool bVERBOSE = false;
 void GLOBAL_LOG(const char * name, LOG_LEVEL lvl, char * msg, va_list args ){
@@ -188,18 +208,20 @@ void loadFile(char *file){
 			while(patch != NULL){
 				//check the 'type' attribute of the patch
 			
-				patch_handler* h;
+				patch_handler* h = NULL;
 
 				const char *type = patch->Attribute("type");
-				if(strcmp(type, "code") == 0){
-					h = (patch_handler *)&ch;
-				}
-				else if(strcmp(type, "memory") == 0){
-					//make sure MH_PIE flag is not set 
-					//or eventually compensate for this if the program is running on the device
-				}
-				else if(strcmp(type, "plist") == 0){
 
+				for(int x = 0; x < N_HANDLERS; x++){
+					if(strcmp(type, handles[x]->name()) == 0){
+						h = handles[x];
+						break;
+					}
+				}
+
+				if(h == NULL){
+					GLOBAL_LOG(LOG_LEVEL::ERROR, "No handler can be found for '%s'", type);
+					return;
 
 				}
 
@@ -219,6 +241,8 @@ void loadFile(char *file){
 
 		el = el->NextSiblingElement("mod");
 	}
+
+	destroyHandles();
 
 	printf("\n");
 	GLOBAL_LOG("Success!");

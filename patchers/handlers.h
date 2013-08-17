@@ -16,26 +16,39 @@
 *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _RECOGNITION_HANDLE_
-#define _RECOGNITION_HANDLE_
+#ifndef _OP_HANDLERS_
+#define _OP_HANDLERS_
+
+/* patchers/handlers.h : This file does not contain any patcher/handler definitions. Rather it 
+*                        contains a lookup table that tells the main program which handlers to call
+*                        and how to use them.
+*/
 
 #include "../op.h"
+/* Add includes to specific patchers here */
+#include "code_handle.h"
 
-class recognition_handle : patch_handler{
-public:
-	recognition_handle(){};
+/* End patcher includes */
 
-	const char* name(){ return  "codesig"; };
-	const char* abrv(){ return  "RCGN"; };
 
-	bool handle(XMLElement *patch);
-	void load(MOD_ENV* env);
+/*  patch_handler*  patchname_handle_init()  */
+typedef patch_handler* (*patch_handler_init)();
 
-	XMLElement generateSignature(function* func);
+/*  void            patchname_handle_destroy()  */
+typedef void (*patch_handler_destroy)(patch_handler* h);
 
-private:
-	MOD_ENV* env;
-	codestream* strm;
+
+struct HANDLER_ENTRY{
+	patch_handler_init init;
+	patch_handler_destroy destroy;
+};
+
+HANDLER_ENTRY HANDLERS[] = {
+	{code_handle_init, code_handle_destroy}
+
+	/* Additional entries for handlers go above this comment*/
+
+
 };
 
 #endif

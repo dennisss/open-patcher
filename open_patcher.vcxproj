@@ -90,6 +90,7 @@
     <ClInclude Include="mach-o\nlist.h" />
     <ClInclude Include="op.h" />
     <ClInclude Include="patchers\code_handle.h" />
+    <ClInclude Include="patchers\handlers.h" />
     <ClInclude Include="patchers\recognition_handle.h" />
     <ClInclude Include="tinyxml2.h" />
   </ItemGroup>

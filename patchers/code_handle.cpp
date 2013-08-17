@@ -18,6 +18,10 @@
 
 #include "code_handle.h"
 
+patch_handler* code_handle_init(){ return (patch_handler *)new code_handle();  };
+void code_handle_destroy(patch_handler* h){ delete (code_handle *)h; };
+
+
 function *code_handle::findFunc(const char *nclass, const char *nfunc){
 	if(nfunc == NULL){
 		return NULL;

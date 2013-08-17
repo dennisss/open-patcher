@@ -71,5 +71,8 @@
     <ClInclude Include="patchers\code_handle.h">
       <Filter>Header Files\patchers</Filter>
     </ClInclude>
+    <ClInclude Include="patchers\handlers.h">
+      <Filter>Header Files\patchers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
